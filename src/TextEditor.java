@@ -37,7 +37,7 @@ public class TextEditor extends JFrame {
         deletedLines = new TreeSet<>();
 
         // Display file content with line numbers
-        textArea.append(">> ");
+        textArea.append(USER_PROMPT);
         setVisible(true);
     }
 
