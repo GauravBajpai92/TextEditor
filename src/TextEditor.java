@@ -35,7 +35,7 @@ public class TextEditor extends JFrame {
         // Initialize insertedLines and deletedLines
         insertedLines = new TreeMap<>();
         deletedLines = new TreeSet<>();
-
+        basicInfoOnLoad();
         // Display file content with line numbers
         textArea.append(USER_PROMPT);
         setVisible(true);
@@ -91,10 +91,17 @@ public class TextEditor extends JFrame {
 
     private void appendToTextArea(String text) {
         textArea.append(text);
-        if(!text.equals(USER_PROMPT))
-            textArea.setCaretPosition(textArea.getDocument().getLength()); // Auto-scroll to bottom
+        textArea.setCaretPosition(textArea.getDocument().getLength()); // Auto-scroll to bottom
     }
 
+    private void basicInfoOnLoad() {
+        textArea.append("Editor support below options \n");
+        textArea.append("list - list each line in n:xxx format \n");
+        textArea.append("del n - delete line at n \n");
+        textArea.append("ins n <Content>- insert a line at n with content \n");
+        textArea.append("save - saves changes to disk \n");
+        textArea.append("quit - quits the editor and returns to the command line \n");
+    }
     private void listLines() {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             StringBuilder text = new StringBuilder();
