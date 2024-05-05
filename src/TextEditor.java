@@ -37,7 +37,6 @@ public class TextEditor extends JFrame {
         deletedLines = new TreeSet<>();
 
         // Display file content with line numbers
-        //listLines(command);
         textArea.append(">> ");
         setVisible(true);
     }
@@ -57,7 +56,7 @@ public class TextEditor extends JFrame {
         String command = tokens[0];
         switch (command) {
             case "list":
-                listLines(command);
+                listLines();
                 break;
             case "del":
                 if (tokens.length < 2) {
@@ -96,23 +95,17 @@ public class TextEditor extends JFrame {
             textArea.setCaretPosition(textArea.getDocument().getLength()); // Auto-scroll to bottom
     }
 
-    private void listLines(String command) {
+    private void listLines() {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             StringBuilder text = new StringBuilder();
             String line;
             int lineNumber = 1;
-
             while ((line = reader.readLine()) != null) {
-                if (!deletedLines.contains(lineNumber)) {
-                    text.append(lineNumber).append(": ").append(line).append("\n");
-                    lineNumber++;
-                }
+                text.append(lineNumber).append(": ").append(line).append("\n");
+                lineNumber++;
+
             }
-            for (Map.Entry<Integer, String> entry : insertedLines.entrySet()) {
-                text.insert(getOffset(entry.getKey()), "\n"+entry.getKey() +": " +entry.getValue() + "\n");
-            }
-            if(command.equals("list"))
-                textArea.setText(text.toString());
+            textArea.setText(text.toString());
             setVisible(true);
         } catch (IOException e) {
             appendToTextArea("Error: " + e.getMessage() + "\n");
@@ -121,54 +114,11 @@ public class TextEditor extends JFrame {
 
     private void deleteLine(int lineNumber) {
         deletedLines.add(lineNumber);
-        listLines("del");
     }
 
     private void insertLine(int lineNumber, String text) {
         insertedLines.put(lineNumber, text);
-        listLines("ins");
     }
-    /*private void insertLine(int lineNumber, String text) {
-        try {
-            // Read the content of the text file
-            StringBuilder newText = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-                String line;
-                int currentLineNumber = 1;
-                while ((line = reader.readLine()) != null) {
-                    if (currentLineNumber == lineNumber) {
-                        newText.append(text).append("\n"); // Insert the new line
-                    }
-                    newText.append(line).append("\n"); // Append existing line
-                    currentLineNumber++;
-                }
-            }
-            // If the new line is to be inserted at the end of the file
-            if (lineNumber > insertedLines.size()) {
-                newText.append(text).append("\n");
-            }
-
-            // Write the modified content back to the text file
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-                writer.write(newText.toString());
-            }
-
-            // Update the TreeMap to reflect the inserted line
-            for (Map.Entry<Integer, String> entry : insertedLines.entrySet()) {
-                if (entry.getKey() >= lineNumber) {
-                    insertedLines.put(entry.getKey() + 1, entry.getValue());
-                }
-            }
-            // Add the new line to the TreeMap
-            insertedLines.put(lineNumber, text);
-
-            listLines(); // Update the text area display
-        } catch (IOException e) {
-            appendToTextArea("Error: " + e.getMessage() + "\n");
-            e.printStackTrace();
-        }
-    }
-*/
 
     private void saveToFile() {
         try {
